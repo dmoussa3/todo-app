@@ -35,9 +35,9 @@ export default function TodoApp() {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1 style={{ marginBottom: '10px' }}>MY To-Do List 📝</h1>
-      <form onSubmit={addTodo} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '7px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', padding: '20px', backgroundImage:'url(/To-do.png)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+      <h1 style={{ marginBottom: '10px', color: 'red' }}>MY To-Do List 📝</h1>
+      <form onSubmit={addTodo} style={{ color:'black', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '7px' }}>
         <input
           value={task}
           onChange={(e) => setTask(e.target.value)}
@@ -47,7 +47,7 @@ export default function TodoApp() {
       </form>
       <ul>
         {todos.map((todo, i) => (
-          <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '7px' }}>
+          <li key={i} style={{ color:'black', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '7px' }}>
             <input
               type="checkbox"
               checked={todo.done}
