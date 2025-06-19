@@ -5,6 +5,16 @@ import { Toaster, toast } from 'react-hot-toast';
 export default function TodoApp() {
   const [todos, setTodos] = useState([]);
   const [task, setTask] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000); // update every second
+    return () => clearInterval(interval); 
+  }, []);
+
 
   useEffect(() => {
     const storedTodos = JSON.parse(localStorage.getItem('todos')) || [];
@@ -18,7 +28,8 @@ export default function TodoApp() {
   const addTodo = (e) => {
     e.preventDefault();
     if (task.trim()) {
-      setTodos([...todos, { text: task, done: false }]);
+      setTodos([...todos, { text: task, due: dueDate, done: false }]);
+      setDueDate('');
       toast.success('Task added!', {
         duration: 3000,
         style: {
@@ -73,7 +84,8 @@ export default function TodoApp() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', padding: '20px', backgroundImage:'url(/To-do.png)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
       <Toaster position="top-center" reverseOrder={false} />
-      <h1 style={{ marginBottom: '10px', color: 'black', fontSize: '41px', fontFamily: 'helvettica', background: 'blue' }}>MY To-Do List 📝</h1>
+      <p style={{ color: 'red', fontFamily: 'initial' }}> {currentTime.toLocaleDateString()} • {currentTime.toLocaleTimeString() }</p>
+      <h1 style={{ marginBottom: '10px', color: 'white', fontSize: '41px', fontFamily: 'helvettica', background: 'blue' }}>MY To-Do List 📝</h1>
       <form onSubmit={addTodo} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '7px'}}>
         <input
           value={task}
@@ -81,6 +93,14 @@ export default function TodoApp() {
           placeholder="Enter task"
           style={{ width: '200px', height: '22px' }}
         />
+
+        <input
+          type="datetime-local"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          style={{ width: '200px', height: '22px' }}
+        />
+
         <button type="submit" style={{ width: '90px', color: 'yellow' }}>Add Task ✅</button>
       </form>
       <ul>
@@ -91,9 +111,7 @@ export default function TodoApp() {
               checked={todo.done}
               onChange={() => toggleDone(i)}
             />
-            <span style={{ textDecoration: todo.done ? 'line-through' : 'none' }}>
-              {todo.text}
-            </span>
+            <span style={{ textDecoration: todo.done ? 'line-through' : 'none' }}> {todo.text} • {todo.due ? `Due: ${new Date(todo.due).toLocaleString()}` : ''} </span>
             <button onClick={() => removeTodo(i)} style={{ fontSize: '12px', color: 'maroon', padding: '1px'}}> Remove ❌ </button>
           </li>
         ))}
