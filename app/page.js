@@ -9,6 +9,12 @@ export default function TodoApp() {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000); // update every second
@@ -28,6 +34,7 @@ export default function TodoApp() {
   const addTodo = (e) => {
     e.preventDefault();
     if (task.trim()) {
+      const newTodo = { text: task, due: dueDate, done: false };
       setTodos([...todos, { text: task, due: dueDate, done: false }]);
       setDueDate('');
       toast.success('Task added!', {
@@ -38,6 +45,20 @@ export default function TodoApp() {
           borderRadius: '8px',
         },
       });
+
+      if (dueDate) {
+        const notitTime = new Date(dueDate).getTime() - (15*60*1000); // 15 minutes before due time
+        const delay = notitTime - Date.now();
+        if (delay > 0) {
+          setTimeout(() => {
+            if (Notification.permission === 'granted') {
+              new Notification('⏰ Task Reminder', {
+                body: `Reminder: "${newTodo.text}" is due in 15 minutes!`,
+              });
+            } else { alert(`Reminder: "${newTodo.text}" is due in 15 minutes!`); }
+          }, delay);
+        } 
+      }
     } else {
       toast.error('Please enter a task!', {
         duration: 3000,
